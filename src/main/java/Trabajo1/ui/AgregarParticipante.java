@@ -47,12 +47,16 @@ public class AgregarParticipante extends JFrame {
         contentPane.add(region);
 
         JButton botonCargar = new JButton("Cargar");
+
         botonCargar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     onBotonCargar();
+                } catch (RuntimeException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error de validación", JOptionPane.WARNING_MESSAGE);
                 } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(null, "Error al guardar en la base de datos: " + ex.getMessage(), "Error de SQL", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
                 }
             }
         });
@@ -66,8 +70,9 @@ public class AgregarParticipante extends JFrame {
 
     private void onBotonCargar() throws SQLException {
 //        Participante p = new Participante(nombre.getText(), telefono.getText(), region.getText());
-        this.participantes.nuevoParticipante(nombre.getText(), telefono.getText(), region.getText());
+
         try {
+            this.participantes.nuevoParticipante(nombre.getText(), telefono.getText(), region.getText());
             JOptionPane.showMessageDialog(this, "Participante agregado con éxito");
             // Aquí podrías invocar al repositorio o lógica de almacenamiento
         } catch (IllegalArgumentException ex) {
